@@ -39,15 +39,68 @@ public class Board {
 		this.board = board;
 	}
 	/**
-	 * This method generates food on a random cell in the board
+	 * This method generates food on a random cell in the board as long
+	 * as its not part of the snake or have food in it already
 	 */
 	public void generateFood() {
-		//random row and column where the food will be generated at
-		int row = (int)(Math.random() * this.ROW_COUNT);
-		int col = (int)(Math.random() * this.COLUMN_COUNT);
-		//now at this row and column make the cell a food type
-		board[row][col].setCellType(CellType.FOOD);
-		System.out.printf("Food is generated at: %d, %d%n", row, col);
+		boolean needToGenerateAgain = true;
+		//this while loop will keep going until food is generated again
+		while(needToGenerateAgain) {
+			//random row and column where the food will be generated at
+			int row = (int)(Math.random() * this.ROW_COUNT);
+			int col = (int)(Math.random() * this.COLUMN_COUNT);
+			//now make sure this cell is empty because food should only be
+				//generated on an empty cell
+			//will first check if board is full, if the board is full then 
+				//no food should be generated
+			if(isBoardFull()) {
+				System.out.println("The board is full so no food can be generated");
+				break;
+			}
+			else if(board[row][col].getCellType() == CellType.EMPTY) {
+				//now at this row and column make the cell a food type
+				board[row][col].setCellType(CellType.FOOD);
+				System.out.printf("Food is generated at: %d, %d%n", row, col);
+				needToGenerateAgain = false;
+				break;
+			}
+			else {
+			System.out.println("Food needs to be generated again.");
+			}
+		}
 	}
-
+	/**
+	 * This method determines if the board is full or not, meaning all of the 
+	 * cells have either food or are part of the snake
+	 * @return true is the board is full and false otherwise
+	 */
+	public boolean isBoardFull() {
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[i].length; j++) {
+				//if an empty cell is found then the board isn't empty and 
+					//false is returned
+				if(board[i][j].getCellType() == CellType.EMPTY) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	/**
+	 * This method determines if the board is made up of only snake parts or not
+	 * @return true if the board is made up of only snake parts and false otherwise
+	 */
+	public boolean isAllSnakeParts() {
+		boolean allSnakeParts = true;
+		for(int i = 0; i < ROW_COUNT; i++) {
+			for(int j = 0; j < COLUMN_COUNT; j++) {
+				if(board[i][j].getCellType() == CellType.EMPTY || board[i][j].getCellType() == CellType.FOOD) {
+					allSnakeParts = false;
+					return allSnakeParts;
+				}
+			}
+		}
+		return allSnakeParts;
+	}
 }
+

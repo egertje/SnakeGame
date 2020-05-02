@@ -37,7 +37,6 @@ public class GameController {
 		//first have the user choose a direction for the snake
 		int direction = getChoice();
 		while(!(newGame.isGameOver()) && ((direction == 1) || (direction == 2) || (direction == 3) || (direction == 4) || (direction == 5))) {
-			
 			//if the user wants to exit the game, have gameOver be true
 			if(direction == 5) {
 				newGame.setGameOver(true);
@@ -61,6 +60,10 @@ public class GameController {
 				//now that the direction has been updated with user input 
 					//have the game be updated
 				newGame.updateGame();
+				//will now end the game if gameOver is true by breaking the loop
+				if(newGame.isGameOver() == true) {
+					break;
+				}
 				//now, generate food
 				newGame.getBoard().generateFood();
 				//get the next direction of the snake
@@ -81,3 +84,4 @@ public class GameController {
 		return choice;
 	}
 }
+
