@@ -53,33 +53,50 @@ public class Game {
 	 */
     public void updateGame() { 
         System.out.println("Updating game!"); 
-        if (!gameOver) { 
+        if(!gameOver) { 
         	//need to make sure the snake is moving
             if (this.currentDirection != Direction.NONE) {
             	//Will now be getting the next cell the snake is moving too
-                Cell nextCell = getNextCell(snake.getSnakeParts().head.data); 
-                //Need to see if the cell the snake is moving to is part of the 
-                	//snake's body
-                //If it is then the game is over since the snake crashed into itself
-                if (snake.checkIfCrashed(nextCell)) { 
-                    setDirection(Direction.NONE); 
-                    gameOver = true; 
-                } 
-                //if the snake won't crash have it move
-                else {
-                	//first store the CellType of the next cell because later we'll
-                		//want to know if it's food
-                	CellType nextCellType = nextCell.getCellType();
-                	//store the old tail in a variable because if the snake
-                		//has moved to a cell with food that tail will need to
-                		//be added back since it's going to grow
-                    Cell oldTail = snake.move(nextCell); 
-                    if (nextCellType == CellType.FOOD) { 
-                        snake.grow(oldTail); 
-                        //now generate food again since some food has been eat
-                        board.generateFood(); 
-                    } 
-                } 
+            	//must do try/catch block if the snake is going to go out of bounds
+            	try {
+            		Cell nextCell = getNextCell(snake.getSnakeParts().head.data); 
+            		//Need to see if the cell the snake is moving to is part of the 
+                		//snake's body
+            		//If it is then the game is over since the snake crashed into itself
+            		if (snake.checkIfCrashed(nextCell)) { 
+            			setDirection(Direction.NONE); 
+            			gameOver = true; 
+            		} 
+            		//if the snake won't crash have it move
+            		else {
+            			//first store the CellType of the next cell because later we'll
+                			//want to know if it's food
+            			CellType nextCellType = nextCell.getCellType();
+            			//store the old tail in a variable because if the snake
+                			//has moved to a cell with food that tail will need to
+                			//be added back since it's going to grow
+            			Cell oldTail = snake.move(nextCell); 
+            			if (nextCellType == CellType.FOOD) {
+            				//will tell the user the snake just ate food
+            				System.out.println("The snake is eating!");
+            				snake.grow(oldTail); 
+            				//will now check if the board is only snake parts because 
+            					//if it is the user has won the game
+            				if(board.isAllSnakeParts()) {
+            					System.out.println("The entire board is made up of the snake"
+            							+ " so you have won the game!");
+            					gameOver = true;
+            				}
+            				//now generate food again since some food has been eat
+            				board.generateFood(); 
+            			}
+            		}
+            	}
+            	catch (IndexOutOfBoundsException e){
+            		System.out.println("The snake went out of bounds, so the game is now over!");
+            		setDirection(Direction.NONE);
+            		gameOver = true;
+            	}
             } 
         } 
     }
@@ -90,7 +107,7 @@ public class Game {
      * the snake
      * @return the next cell the snake will be moving to
      */
-    private Cell getNextCell(Cell currentPosition) { 
+    private Cell getNextCell(Cell currentPosition) throws IndexOutOfBoundsException { 
         int row = currentPosition.getRow(); 
         int col = currentPosition.getColumn(); 
         switch(currentDirection) {
